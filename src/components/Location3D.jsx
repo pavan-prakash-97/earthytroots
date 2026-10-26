@@ -603,13 +603,13 @@ export default function Location3D() {
 									<i className={`fa-solid ${d.icon}`}></i>
 									<span>{d.name}</span>
 									<b>
-										{d.km} km <small>· {d.mins} min</small>
+										{d.km} km <small>{d.mins} min</small>
 									</b>
 								</li>
 							);
 						})}
 					</ul>
-					<a href="contact.html" className="btn-default btn-highlighted">
+					<a href="/contact" className="btn-default btn-highlighted">
 						Plan a Site Visit
 					</a>
 				</div>

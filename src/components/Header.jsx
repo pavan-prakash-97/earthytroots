@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const LINKS = [
   { to: "/", n: "01", label: "Home" },
@@ -12,6 +12,7 @@ const LINKS = [
 
 export default function Header() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [solid, setSolid] = useState(false)
   const [hide, setHide] = useState(false)
@@ -56,14 +57,37 @@ export default function Header() {
 
   const cls = [solid ? "solid" : "", hide ? "hide" : ""].filter(Boolean).join(" ")
 
+  /* Selecting an entry hides the overlay in the same frame and routes at
+     once: the links must never sit on top of the page that is loading. */
+  const handleNavigate = (event, to) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    if (open) {
+      document.body.classList.add("menu-dismiss")
+      window.setTimeout(() => document.body.classList.remove("menu-dismiss"), 400)
+      setOpen(false)
+    }
+    navigate(to)
+  }
+
   return (
     <>
       <header id="hdr" className={cls || undefined}>
-        <a className="logo" href="/" aria-label="EarthyRoots Farm — home">
-          <img src="images/added/logo-header.svg" alt="EarthyRoots Farm" />
+        <a
+          className="logo"
+          href="/"
+          aria-label="EarthyRoots Farm — home"
+          onClick={(event) => handleNavigate(event, "/")}
+        >
+          <span className="logo-text">EarthyRoots Farm</span>
         </a>
         <div className="nav-r">
-          <a className="btn solid" href="/contact" style={{ padding: "12px 20px" }}>
+          <a
+            className="btn solid"
+            href="/contact"
+            style={{ padding: "12px 20px" }}
+            onClick={(event) => handleNavigate(event, "/contact")}
+          >
             Book a Site Visit
           </a>
           <button
@@ -85,7 +109,7 @@ export default function Header() {
               key={l.to}
               href={l.to}
               className={pathname === l.to ? "nav-cur" : undefined}
-              onClick={() => setOpen(false)}
+              onClick={(event) => handleNavigate(event, l.to)}
             >
               <small>{l.n}</small>
               {l.label}

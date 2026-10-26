@@ -426,7 +426,7 @@ header em,footer em{color:var(--mango)}
 }
 .burger:hover{border-color:rgba(228,213,188,.75);background:rgba(228,213,188,.09)}
 .burger b{width:18px;height:8px}
-/* open state: two bars converge into a true 45° cross */
+/* open state: two bars converge into a true 45deg cross */
 .menu-open .burger b{width:20px}
 .menu-open .burger b:before{top:3.5px;transform:rotate(45deg)}
 .menu-open .burger b:after{bottom:3.5px;transform:rotate(-45deg)}
@@ -434,7 +434,7 @@ header em,footer em{color:var(--mango)}
 section#visit.dark,
 #visit{background:#313626}
 /* ---------------------------------------------------------------------------
-   Footer — "Come home." editorial block
+   Footer â€” "Come home." editorial block
    --------------------------------------------------------------------------- */
 
 #footer{
@@ -888,4 +888,93 @@ section#visit.dark,
 
 .rail-section > .rail-foot{
 	margin-top:clamp(30px,4vw,50px);
+}
+/* footer now uses the site's primary serif instead of the script face */
+#footer .f-script{
+	font-family:var(--serif);
+	font-style:italic;
+	font-weight:400;
+	letter-spacing:-.02em;
+}
+
+#footer .f-mark{
+	font-family:var(--serif);
+	font-style:normal;
+	font-weight:500;
+	letter-spacing:-.01em;
+}
+
+/* text wordmark in the top bar */
+.logo{
+	display:flex;
+	align-items:center;
+}
+
+.logo .logo-text{
+	font-family:var(--serif);
+	font-size:23px;
+	line-height:1;
+	letter-spacing:-.015em;
+	color:var(--ink);
+	white-space:nowrap;
+}
+
+header#hdr.hide .logo .logo-text,
+#hdr:not(.solid) .logo .logo-text{
+	color:var(--cream);
+}
+
+header#hdr.solid .logo .logo-text{
+	color:var(--ink);
+}
+/* the wordmark keeps one colour whether the bar is transparent or solid */
+#hdr .logo .logo-text,
+#hdr.solid .logo .logo-text,
+header#hdr.solid .logo .logo-text,
+header#hdr.hide .logo .logo-text{
+	color:var(--cream);
+}
+
+/* mobile menu: give the links room to breathe */
+@media (max-width: 767px){
+
+	#menu nav{
+		gap: clamp(12px, 3vw, 20px);
+		padding: 96px var(--pad) 48px;
+	}
+
+	#menu nav a{
+		line-height: 1.18;
+	}
+
+	#menu nav a small{
+		font-size: 9.5px;
+	}
+}
+/* menu overlay: consistent spacing between links on every viewport */
+#menu nav{
+	gap: clamp(10px, 1.4vw, 22px);
+}
+
+#menu nav a{
+	line-height: 1.14;
+}
+
+@media (max-height: 760px){
+	#menu nav{
+		padding-top: 84px;
+		padding-bottom: 40px;
+	}
+}
+/* selecting a menu entry: dismiss the overlay in the same frame */
+body.menu-dismiss #menu,
+body.menu-dismiss #menu *{
+	transition: none !important;
+	animation: none !important;
+}
+
+body.menu-dismiss #menu{
+	visibility: hidden !important;
+	clip-path: inset(0 0 100% 0) !important;
+	pointer-events: none !important;
 }

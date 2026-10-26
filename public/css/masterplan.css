@@ -1637,7 +1637,7 @@ body.masterplan-lock{
 	line-height:1.02;
 }
 /* The site has a generic .row:hover (built for the amenity rows) that indents
-   and tints any .row — the ported masterplan uses .row for its grid, so that
+   and tints any .row â€” the ported masterplan uses .row for its grid, so that
    rule was nudging the whole block on hover. Neutralise it here. */
 .masterplan .row,
 .masterplan .row:hover{
@@ -1886,7 +1886,7 @@ body.masterplan-lock{
 	margin-top:4px;
 }
 /* ---------------------------------------------------------------------------
-   Tooltip: the reference layout — label left, value right on one line,
+   Tooltip: the reference layout â€” label left, value right on one line,
    divider under the header, enquiry link at the foot.
    The dashes came from a generic site rule (.row li:before adds an em dash),
    so it is switched off inside the masterplan.
@@ -1981,9 +1981,8 @@ body.masterplan-lock{
 	white-space:nowrap;
 }
 /* The site's generic .row ul is a two-column list (built for the amenity
-   rows) — inside the masterplan it split the tooltip rows into two columns.
+   rows) â€” inside the masterplan it split the tooltip rows into two columns.
    Force a single column so Size / Cluster / Facing each get their own row. */
-.masterplan .row ul,
 .masterplan .masterplan-tooltip ul{
 	columns:auto;
 	column-gap:0;
@@ -1996,4 +1995,150 @@ body.masterplan-lock{
 .masterplan .masterplan-tooltip li{
 	display:flex;
 	width:100%;
+}
+/* legend: more separation between entries and larger status dots */
+.masterplan .masterplan-legend{
+	gap: clamp(24px, 2.6vw, 40px);
+}
+
+.masterplan .masterplan-legend li{
+	gap: 11px;
+	font-size: 11px;
+}
+
+.masterplan .masterplan-legend .dot{
+	width: 13px;
+	height: 13px;
+	flex: 0 0 13px;
+}
+/* legend: clear separation between a status dot and the label before it */
+.masterplan .masterplan-legend{
+	column-gap: clamp(36px, 3.6vw, 60px);
+	row-gap: 16px;
+	align-items: center;
+}
+
+.masterplan .masterplan-legend li{
+	gap: 14px;
+	white-space: nowrap;
+}
+
+.masterplan .masterplan-legend .dot{
+	margin-right: 0;
+}
+
+/* the legend shares .row, so give it an explicit, higher-specificity gap */
+.masterplan .row .masterplan-legend{
+	columns: auto;
+	column-gap: clamp(36px, 3.6vw, 60px);
+	row-gap: 16px;
+}
+
+/* ---------------------------------------------------------------------------
+   "Getting Here" panel: match the previous build's card
+   --------------------------------------------------------------------------- */
+
+.location-3d-panel{
+	width: 400px;
+	padding: 34px 32px;
+	border-radius: 22px;
+}
+
+.location-3d-eyebrow{
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	font-family: var(--sans);
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: .32em;
+	text-transform: uppercase;
+	color: rgba(228, 213, 188, .88);
+	margin-bottom: 18px;
+}
+
+.location-3d-eyebrow::before{
+	content: "";
+	width: 34px;
+	height: 1px;
+	background: currentColor;
+	display: block;
+}
+
+.location-3d-panel h3{
+	font-family: var(--serif);
+	font-size: clamp(24px, 2vw, 30px);
+	line-height: 1.15;
+	color: var(--cream);
+	margin: 0 0 22px;
+}
+
+.location-3d-list{
+	margin: 0 0 26px;
+}
+
+.location-3d-list li{
+	gap: 16px;
+	padding: 14px 0;
+	border-bottom: 1px solid rgba(228, 213, 188, .16);
+}
+
+.location-3d-list i{
+	width: 42px;
+	height: 42px;
+	flex: 0 0 42px;
+	border-radius: 50%;
+	background: rgba(228, 213, 188, .10);
+	border: 1px solid rgba(228, 213, 188, .18);
+	font-size: 14px;
+	color: var(--cream);
+}
+
+.location-3d-list span{
+	flex: 1;
+	font-size: 15px;
+	color: rgba(255, 255, 255, .9);
+}
+
+.location-3d-list b{
+	font-size: 15px;
+	font-weight: 600;
+	color: #fff;
+	white-space: nowrap;
+}
+
+.location-3d-list b small{
+	font-weight: 400;
+	color: rgba(255, 255, 255, .55);
+	margin-left: 6px;
+}
+
+.btn-default.btn-highlighted{
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	padding: 16px 24px;
+	background: var(--mango, #B0936D);
+	border: 1px solid var(--mango, #B0936D);
+	border-radius: 6px;
+	color: #2A1512;
+	font-family: var(--sans);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: .22em;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
+}
+
+.btn-default.btn-highlighted::after{
+	content: "\2197";
+	font-size: 14px;
+	line-height: 1;
+}
+
+.btn-default.btn-highlighted:hover{
+	background: var(--cream);
+	border-color: var(--cream);
+	color: #1D0F0C;
 }
