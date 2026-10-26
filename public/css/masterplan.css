@@ -1,0 +1,1999 @@
+/* ---------------------------------------------------------------------------
+   Masterplan + Location 3D (ported from the old project)
+   Old-project tokens mapped onto this site's palette so the ported rules work
+   unchanged.
+   --------------------------------------------------------------------------- */
+
+:root{
+	--white-color:#fff;
+	--bg-color:#F4ECDD;
+	--primary-color:#581B1D;
+	--pearl-color:#E4D5BC;
+	--accent-color:#B0936D;
+	--divider-color:rgba(21,18,18,.14);
+	--dark-divider-color:rgba(228,213,188,.18);
+	--text-color:#151212;
+	--default-font:'Instrument Sans',system-ui,-apple-system,sans-serif;
+	--midnight:#151212;
+	--radius:18px;
+	--location-bg:#E4D5BC;
+	--plot-available:#6E8F4E;
+	--plot-reserved:#C99A45;
+	--plot-sold:#A8968F;
+}
+/************************************/
+/*** 	 Masterplan & Location css    ***/
+/************************************/
+
+/*
+ * Two home page sections:
+ * 01. Masterplan  - interactive plot map with availability + filters
+ * 02. Location 3D - scroll-driven 3D flyover of the land
+ * Data for both lives in js/masterplan-location.js
+ */
+
+/* Bootstrap enables smooth scrolling on :root, which breaks ScrollTrigger's
+   measurements when the browser restores scroll on reload (pinned section
+   then renders as an empty block). Keep native jumps on this page. */
+html{
+	scroll-behavior: auto !important;
+}
+
+:root{
+	/* Plot status colours are semantic (legend + markers), deliberately kept
+	   outside the brand palette: green = available, gold = reserved, grey = sold */
+	--plot-available			: #6E8F4E;
+	--plot-reserved				: #C99A45;
+	--plot-sold					: #A8968F;
+	--location-bg				: var(--midnight);
+}
+
+/************************************/
+/*** 	   01. Masterplan css	  ***/
+/************************************/
+
+.masterplan{
+	padding: 100px 0;
+}
+
+.masterplan-content{
+	margin-right: 30px;
+}
+
+.masterplan .section-title h2.masterplan-title{
+	font-size: 64px;
+	line-height: 1.05em;
+	letter-spacing: -0.02em;
+}
+
+.masterplan .section-title h2.masterplan-title em{
+	display: block;
+	font-style: normal;
+	font-weight: 400;
+	color: var(--accent-color);
+}
+
+.masterplan-availability{
+	margin-bottom: 40px;
+}
+
+.masterplan-progress{
+	position: relative;
+	height: 3px;
+	background: var(--divider-color);
+	border-radius: 3px;
+	overflow: hidden;
+	margin-bottom: 30px;
+}
+
+.masterplan-progress-bar{
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0;
+	background: var(--primary-color);
+	border-radius: 3px;
+	transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
+}
+
+.masterplan-remaining{
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 25px;
+}
+
+.masterplan-remaining-count{
+	font-size: 44px;
+	font-weight: 600;
+	line-height: 1em;
+	color: var(--primary-color);
+	min-width: 1.2em;
+}
+
+.masterplan-legend{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 28px;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.masterplan-legend li{
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 15px;
+}
+
+.masterplan-legend .dot,
+.masterplan-tooltip .dot{
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+	flex-shrink: 0;
+}
+
+.dot.is-available{ background: var(--plot-available); }
+.dot.is-reserved{ background: var(--plot-reserved); }
+.dot.is-sold{ background: var(--plot-sold); }
+
+.masterplan-filter h3{
+	font-family: var(--default-font);
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--accent-color);
+	margin-bottom: 18px;
+}
+
+.masterplan-filter-list{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.masterplan-filter-list button{
+	font-family: inherit;
+	font-size: 15px;
+	line-height: 1em;
+	color: var(--text-color);
+	background: transparent;
+	border: 1px solid var(--divider-color);
+	border-radius: 100px;
+	padding: 13px 22px;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+}
+
+.masterplan-filter-list button:hover{
+	border-color: var(--primary-color);
+	color: var(--primary-color);
+}
+
+.masterplan-filter-list button.is-active{
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+	color: var(--white-color);
+}
+
+.masterplan-map-box{
+	position: relative;
+}
+
+.masterplan-map-header{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 15px;
+	margin-bottom: 18px;
+}
+
+.masterplan-map-header > span{
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--accent-color);
+}
+
+.masterplan-expand{
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--primary-color);
+	background: transparent;
+	border: 1px solid var(--divider-color);
+	border-radius: 100px;
+	padding: 11px 20px;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+}
+
+.masterplan-expand:hover{
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+	color: var(--white-color);
+}
+
+.masterplan-map{
+	position: relative;
+	aspect-ratio: 16 / 9;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 30px 60px -30px rgba(88, 27, 29, 0.45);
+}
+
+.masterplan-map > img{
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 1.2s cubic-bezier(.22, 1, .36, 1);
+}
+
+.masterplan-map.has-focus > img{
+	transform: scale(1.015);
+}
+
+.masterplan-markers{
+	position: absolute;
+	inset: 0;
+}
+
+.plot-marker{
+	position: absolute;
+	width: 28px;
+	height: 28px;
+	margin: -14px 0 0 -14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: inherit;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1;
+	color: var(--white-color);
+	border: 2px solid rgba(255, 255, 255, 0.92);
+	border-radius: 50%;
+	padding: 0;
+	cursor: pointer;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	transform: scale(0.2);
+	transition: transform 0.45s cubic-bezier(.34, 1.56, .64, 1), opacity 0.35s ease, box-shadow 0.3s ease;
+	transition-delay: calc(var(--i, 0) * 25ms);
+}
+
+.plot-marker.is-available{ background: var(--plot-available); }
+.plot-marker.is-reserved{ background: var(--plot-reserved); }
+.plot-marker.is-sold{ background: var(--plot-sold); }
+
+.plot-marker.is-available::after{
+	content: '';
+	position: absolute;
+	inset: -6px;
+	border-radius: 50%;
+	border: 2px solid var(--plot-available);
+	opacity: 0;
+	animation: plot-pulse 2.6s ease-out infinite;
+	animation-delay: calc(var(--i, 0) * 120ms);
+	pointer-events: none;
+}
+
+@keyframes plot-pulse{
+	0%{ transform: scale(0.7); opacity: 0.8; }
+	70%,100%{ transform: scale(1.6); opacity: 0; }
+}
+
+.plot-marker.is-amenity{
+	width: 32px;
+	height: 32px;
+	margin: -16px 0 0 -16px;
+	font-size: 13px;
+	color: var(--primary-color);
+	background: var(--bg-color);
+	border-color: var(--primary-color);
+}
+
+.masterplan-map.is-in .plot-marker{
+	opacity: 1;
+	transform: scale(1);
+}
+
+.masterplan-map.is-in .plot-marker:hover,
+.masterplan-map.is-in .plot-marker:focus-visible,
+.masterplan-map.is-in .plot-marker.is-current{
+	transform: scale(1.3);
+	z-index: 3;
+	box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.45), 0 6px 16px rgba(0, 0, 0, 0.4);
+	transition-delay: 0s;
+	outline: none;
+}
+
+.masterplan-map.is-in .plot-marker.is-dimmed{
+	opacity: 0.18;
+	transform: scale(0.7);
+	pointer-events: none;
+	transition-delay: 0s;
+}
+
+.plot-marker.is-dimmed::after{
+	display: none;
+}
+
+.masterplan-tooltip{
+	position: absolute;
+	z-index: 5;
+	width: 230px;
+	background: var(--white-color);
+	border-radius: 14px;
+	padding: 18px;
+	box-shadow: 0 20px 40px -10px rgba(31, 10, 12, 0.45);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(8px);
+	transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+	pointer-events: none;
+}
+
+.masterplan-tooltip.is-visible{
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+.masterplan-tooltip-head{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.masterplan-tooltip-head h4{
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.masterplan-tooltip-status{
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.masterplan-tooltip ul{
+	list-style: none;
+	padding: 12px 0 0;
+	margin: 0;
+	border-top: 1px solid var(--divider-color);
+}
+
+.masterplan-tooltip li{
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	font-size: 14px;
+	line-height: 1.4em;
+	padding: 3px 0;
+}
+
+.masterplan-tooltip li span:last-child{
+	font-weight: 600;
+	color: var(--primary-color);
+	text-align: right;
+}
+
+.masterplan-tooltip p{
+	font-size: 14px;
+	line-height: 1.5em;
+	margin: 0;
+}
+
+.masterplan-tooltip a{
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 14px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--accent-color);
+}
+
+.masterplan-tooltip a:hover{
+	color: var(--primary-color);
+}
+
+.masterplan-hint{
+	font-size: 14px;
+	text-align: center;
+	margin: 18px 0 0;
+	opacity: 0.75;
+}
+
+/* Expanded (fullscreen) map */
+.masterplan-map-box.is-expanded{
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 30px;
+	background: rgba(31, 10, 12, 0.94);
+	animation: masterplan-expand-in 0.4s ease;
+}
+
+@keyframes masterplan-expand-in{
+	from{ opacity: 0; }
+	to{ opacity: 1; }
+}
+
+.masterplan-map-box.is-expanded .masterplan-map-header,
+.masterplan-map-box.is-expanded .masterplan-map{
+	width: min(100%, calc((100vh - 150px) * 16 / 9));
+}
+
+.masterplan-map-box.is-expanded .masterplan-map-header > span,
+.masterplan-map-box.is-expanded .masterplan-hint{
+	color: var(--white-color);
+}
+
+.masterplan-map-box.is-expanded .masterplan-expand{
+	color: var(--white-color);
+	border-color: var(--dark-divider-color);
+}
+
+body.masterplan-lock{
+	overflow: hidden;
+}
+
+/************************************/
+/*** 	   02. Location 3D css	  ***/
+/************************************/
+
+.location-3d{
+	position: relative;
+	background: var(--location-bg);
+	color: var(--white-color);
+}
+
+.location-3d-pin{
+	position: relative;
+	height: 100vh;
+	min-height: 640px;
+	overflow: hidden;
+}
+
+/* Values driven by GSAP (see js/masterplan-location.js) */
+.location-3d-stage{
+	--rx: 0;
+	--rz: 0;
+	--s: 0.56;
+	--ty: 13;
+	--mx: 0;
+	--my: 0;
+	--vig: 0;
+	--radius: 22;
+	--tx: 0;
+	position: absolute;
+	inset: 0;
+	perspective: 1500px;
+	perspective-origin: 50% 40%;
+	pointer-events: none;
+}
+
+.location-3d-scene{
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform-style: preserve-3d;
+	transform: rotateX(calc(var(--my) * 1deg)) rotateY(calc(var(--mx) * 1deg));
+}
+
+.location-3d-plane{
+	position: relative;
+	width: min(1100px, 92vw);
+	aspect-ratio: 16 / 9;
+	flex-shrink: 0;
+	transform-style: preserve-3d;
+	transform:
+		translate3d(calc(var(--tx) * 1vw), calc(var(--ty) * 1vh), 0)
+		scale(var(--s))
+		rotateX(calc(var(--rx) * 1deg))
+		rotateZ(calc(var(--rz) * 1deg));
+	will-change: transform;
+}
+
+.location-3d-map,
+.location-3d-vignette,
+.location-3d-sheen{
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: calc(var(--radius) * 1px);
+}
+
+.location-3d-map{
+	display: block;
+	object-fit: cover;
+	/* edges dissolve into the background as the map tilts */
+	-webkit-mask-image: radial-gradient(ellipse 75% 75% at 46% 50%, #000 calc(100% - var(--vig) * 64%), transparent calc(100% - var(--vig) * 30%));
+	mask-image: radial-gradient(ellipse 75% 75% at 46% 50%, #000 calc(100% - var(--vig) * 64%), transparent calc(100% - var(--vig) * 30%));
+}
+
+.location-3d-sheen{
+	background: linear-gradient(115deg, transparent 30%, rgba(248, 240, 226, 0.22) 45%, transparent 60%) no-repeat;
+	background-size: 250% 100%;
+	animation: location-sheen 7s ease-in-out infinite;
+}
+
+@keyframes location-sheen{
+	0%{ background-position: 130% 0; }
+	60%,100%{ background-position: -60% 0; }
+}
+
+.location-3d-vignette{
+	opacity: calc(1 - var(--vig));
+	box-shadow: 0 60px 120px -30px rgba(0, 0, 0, 0.7);
+}
+
+.location-3d-routes{
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.location-3d-routes .route-base{
+	fill: none;
+	stroke: rgba(255, 255, 255, 0.9);
+	stroke-width: 3;
+	stroke-linecap: round;
+	filter: drop-shadow(0 0 6px rgba(240, 228, 206, 0.8));
+}
+
+.location-3d-routes .route-flow{
+	fill: none;
+	stroke: var(--pearl-color);
+	stroke-width: 5;
+	stroke-linecap: round;
+	stroke-dasharray: 2 26;
+	opacity: 0;
+	animation: location-flow 2.4s linear infinite;
+}
+
+.location-3d.is-routed .location-3d-routes .route-flow{
+	opacity: 1;
+	transition: opacity 0.6s ease;
+}
+
+@keyframes location-flow{
+	to{ stroke-dashoffset: -28; }
+}
+
+.location-3d-rings{
+	position: absolute;
+	left: 45%;
+	top: 50%;
+	width: 0;
+	height: 0;
+}
+
+.location-3d-rings span{
+	position: absolute;
+	--ring: min(220px, 20vw);
+	left: calc(var(--ring) / -2);
+	top: calc(var(--ring) / -2);
+	width: var(--ring);
+	height: var(--ring);
+	border-radius: 50%;
+	border: 2px solid rgba(228, 213, 188, 0.85);
+	background: radial-gradient(circle, rgba(228, 213, 188, 0.18), transparent 70%);
+	opacity: 0;
+	transform: scale(0.2);
+}
+
+.location-3d.is-rings .location-3d-rings span{
+	animation: location-ring 3.6s cubic-bezier(.2, .6, .3, 1) infinite;
+}
+
+.location-3d.is-rings .location-3d-rings span:nth-child(2){ animation-delay: 1.2s; }
+.location-3d.is-rings .location-3d-rings span:nth-child(3){ animation-delay: 2.4s; }
+
+@keyframes location-ring{
+	0%{ transform: scale(0.2); opacity: 0.9; }
+	100%{ transform: scale(2.6); opacity: 0; }
+}
+
+/* Clouds float above the map at different depths */
+.location-3d-clouds{
+	position: absolute;
+	inset: 0;
+	transform-style: preserve-3d;
+}
+
+.location-3d-clouds .cloud,
+.location-3d-clouds .cloud-shadow{
+	position: absolute;
+	border-radius: 50%;
+	animation: location-cloud 26s ease-in-out infinite alternate;
+}
+
+.location-3d-clouds .cloud{
+	background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 40%, transparent 70%);
+	filter: blur(14px);
+	opacity: calc(0.75 - var(--vig) * 0.4);
+}
+
+.location-3d-clouds .cloud-shadow{
+	background: radial-gradient(ellipse at center, rgba(20, 6, 7, 0.45), transparent 70%);
+	filter: blur(18px);
+	opacity: calc(1 - var(--vig) * 0.5);
+}
+
+.location-3d-clouds .c1{ left: 8%;  top: 12%; width: 32%; height: 22%; --z: 260px; }
+.location-3d-clouds .c2{ left: 62%; top: 58%; width: 28%; height: 20%; --z: 200px; animation-duration: 32s; }
+.location-3d-clouds .c3{ left: 70%; top: 4%;  width: 22%; height: 16%; --z: 320px; animation-duration: 22s; }
+
+.location-3d-clouds .cloud-shadow{ --z: 0px; margin: 4% 0 0 3%; }
+
+@keyframes location-cloud{
+	from{ transform: translate3d(-12%, 0, var(--z)); }
+	to{ transform: translate3d(14%, 6%, var(--z)); }
+}
+
+/* Pins stand upright: they undo the plane's rotation */
+.location-3d-pins{
+	position: absolute;
+	inset: 0;
+	transform-style: preserve-3d;
+}
+
+.loc-ground{
+	position: absolute;
+	width: 26px;
+	height: 26px;
+	margin: -13px 0 0 -13px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(0, 0, 0, 0.55), transparent 70%);
+	opacity: 0;
+}
+
+.loc-pin{
+	position: absolute;
+	transform-origin: 50% 100%;
+	transform:
+		translate(-50%, -100%)
+		rotateZ(calc(var(--rz) * -1deg))
+		rotateX(calc(var(--rx) * -1deg));
+	transform-style: preserve-3d;
+}
+
+.loc-pin-inner{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	transform-origin: 50% 100%;
+	opacity: 0;
+}
+
+.loc-pin-label{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	white-space: nowrap;
+	background: rgba(255, 255, 255, 0.96);
+	color: var(--primary-color);
+	border-radius: 100px;
+	padding: 8px 16px 8px 8px;
+	box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.55);
+}
+
+.loc-pin-label i{
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	font-size: 13px;
+	color: var(--white-color);
+	background: var(--accent-color);
+	flex-shrink: 0;
+}
+
+.loc-pin-label b{
+	display: block;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.2em;
+}
+
+.loc-pin-label small{
+	display: block;
+	font-size: 12px;
+	line-height: 1.3em;
+	opacity: 0.75;
+}
+
+.loc-pin-stem{
+	width: 2px;
+	height: var(--stem, 60px);
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.25));
+	transform-origin: 50% 100%;
+}
+
+.loc-pin-dot{
+	width: 12px;
+	height: 12px;
+	margin-top: -1px;
+	border-radius: 50%;
+	background: var(--white-color);
+	box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.loc-pin.is-farm .loc-pin-label{
+	background: var(--accent-color);
+	color: var(--white-color);
+	padding: 12px 22px 12px 12px;
+}
+
+.loc-pin.is-farm .loc-pin-label i{
+	width: 38px;
+	height: 38px;
+	font-size: 16px;
+	color: var(--accent-color);
+	background: var(--white-color);
+}
+
+.loc-pin.is-farm .loc-pin-label b{
+	font-size: 19px;
+}
+
+.loc-pin.is-farm .loc-pin-dot{
+	background: var(--pearl-color);
+	box-shadow: 0 0 0 6px rgba(228, 213, 188, 0.35), 0 0 30px 8px rgba(228, 213, 188, 0.6);
+}
+
+.loc-pin.is-destination .loc-pin-label{
+	background: rgba(31, 10, 12, 0.82);
+	color: var(--white-color);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}
+
+.loc-pin.is-destination .loc-pin-label i{
+	background: var(--pearl-color);
+	color: var(--primary-color);
+}
+
+.loc-pin.is-destination .loc-pin-dot{
+	background: var(--pearl-color);
+}
+
+/* Intro + panel overlays */
+.location-3d-eyebrow{
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--pearl-color);
+}
+
+.location-3d-eyebrow::before{
+	content: '';
+	width: 36px;
+	height: 1px;
+	background: currentColor;
+}
+
+.location-3d-intro{
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	right: 0;
+	top: 11vh;
+	text-align: center;
+	padding: 0 20px;
+	pointer-events: none;
+}
+
+.location-3d-intro h2{
+	font-size: clamp(40px, 6vw, 84px);
+	font-weight: 400;
+	line-height: 1.02em;
+	letter-spacing: -0.02em;
+	color: var(--white-color);
+	margin: 22px 0 16px;
+}
+
+.location-3d-intro h2 em{
+	font-style: normal;
+	font-weight: 400;
+	color: var(--pearl-color);
+}
+
+.location-3d-intro p{
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.7);
+	margin: 0;
+}
+
+.location-3d-scroll{
+	position: absolute;
+	left: 50%;
+	top: calc(100% + 18px);
+	width: 22px;
+	height: 34px;
+	margin-left: -11px;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	border-radius: 20px;
+}
+
+.location-3d-scroll i{
+	position: absolute;
+	left: 50%;
+	top: 7px;
+	width: 3px;
+	height: 7px;
+	margin-left: -1.5px;
+	border-radius: 3px;
+	background: var(--white-color);
+	animation: location-scroll 1.8s ease-in-out infinite;
+}
+
+@keyframes location-scroll{
+	0%{ transform: translateY(0); opacity: 1; }
+	80%,100%{ transform: translateY(12px); opacity: 0; }
+}
+
+.location-3d-panel{
+	position: absolute;
+	z-index: 2;
+	left: max(30px, calc((100vw - 1300px) / 2));
+	bottom: 6vh;
+	width: 380px;
+	background: rgba(31, 10, 12, 0.72);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 20px;
+	padding: 30px;
+	backdrop-filter: blur(14px);
+	-webkit-backdrop-filter: blur(14px);
+	opacity: 0;
+	visibility: hidden;
+}
+
+.location-3d-panel h3{
+	font-size: 26px;
+	line-height: 1.2em;
+	color: var(--white-color);
+	margin: 14px 0 20px;
+}
+
+.location-3d-list{
+	list-style: none;
+	padding: 0;
+	margin: 0 0 24px;
+}
+
+.location-3d-list li{
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 11px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.location-3d-list li:last-child{
+	border-bottom: none;
+}
+
+.location-3d-list i{
+	width: 34px;
+	height: 34px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	font-size: 13px;
+	color: var(--pearl-color);
+	background: rgba(228, 213, 188, 0.12);
+}
+
+.location-3d-list span{
+	flex: 1;
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.location-3d-list b{
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--white-color);
+	white-space: nowrap;
+}
+
+.location-3d-list b small{
+	font-weight: 400;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+/* Without motion: show the finished scene, no pinning */
+.location-3d.is-static .location-3d-intro,
+.location-3d.is-static .location-3d-scroll{
+	display: none;
+}
+
+.location-3d.is-static .location-3d-stage{
+	--rx: 54;
+	--rz: -14;
+	--s: 1.15;
+	--ty: 0;
+	--vig: 1;
+	--radius: 0;
+}
+
+.location-3d.is-static .loc-pin-inner,
+.location-3d.is-static .loc-ground,
+.location-3d.is-static .location-3d-panel{
+	opacity: 1;
+	visibility: visible;
+}
+
+@media only screen and (min-width: 1200px){
+
+	.location-3d.is-static .location-3d-stage{
+		--tx: 9;
+	}
+}
+
+@media only screen and (max-width: 1366px){
+
+	.location-3d-panel{
+		width: 340px;
+		padding: 24px;
+	}
+
+	.location-3d-panel h3{
+		font-size: 22px;
+	}
+
+	.location-3d-list li{
+		padding: 8px 0;
+	}
+}
+
+@media only screen and (max-width: 1199px){
+
+	.masterplan-content{
+		margin: 0 0 40px;
+	}
+
+	.location-3d-panel{
+		left: 15px;
+		right: 15px;
+		bottom: 15px;
+		width: auto;
+		padding: 18px;
+		border-radius: 16px;
+	}
+
+	.location-3d-panel .location-3d-eyebrow,
+	.location-3d-panel .btn-default{
+		display: none;
+	}
+
+	.location-3d-panel h3{
+		font-size: 18px;
+		margin: 0 0 10px;
+	}
+
+	.location-3d-list{
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 4px 18px;
+		margin: 0;
+	}
+
+	.location-3d-list li{
+		gap: 8px;
+		padding: 7px 0;
+		border-bottom: none;
+	}
+
+	.location-3d-list i{
+		display: none;
+	}
+
+	.location-3d-list span,
+	.location-3d-list b{
+		font-size: 12px;
+	}
+
+	.location-3d-list b small{
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 991px){
+
+	.masterplan{
+		padding: 50px 0;
+	}
+
+	.masterplan .section-title h2.masterplan-title{
+		font-size: 46px;
+	}
+
+	.masterplan-remaining-count{
+		font-size: 36px;
+	}
+
+	.loc-pin-label{
+		padding: 6px 12px 6px 6px;
+		gap: 8px;
+	}
+
+	.loc-pin-label i{
+		width: 24px;
+		height: 24px;
+		font-size: 11px;
+	}
+
+	.loc-pin-label b{
+		font-size: 13px;
+	}
+
+	.loc-pin-label small{
+		font-size: 11px;
+	}
+}
+
+@media only screen and (max-width: 767px){
+
+	.masterplan .section-title h2.masterplan-title{
+		font-size: 36px;
+	}
+
+	.masterplan-filter-list button{
+		font-size: 14px;
+		padding: 11px 18px;
+	}
+
+	.masterplan-map{
+		border-radius: 14px;
+	}
+
+	.masterplan-map-header > span{
+		font-size: 11px;
+	}
+
+	.masterplan-expand span{
+		display: none;
+	}
+
+	.plot-marker{
+		width: 18px;
+		height: 18px;
+		margin: -9px 0 0 -9px;
+		font-size: 0;
+		border-width: 1.5px;
+	}
+
+	.plot-marker.is-amenity{
+		width: 22px;
+		height: 22px;
+		margin: -11px 0 0 -11px;
+		font-size: 10px;
+	}
+
+	.masterplan-map-box.is-expanded{
+		padding: 15px;
+	}
+
+	.masterplan-map-box.is-expanded .plot-marker{
+		width: 22px;
+		height: 22px;
+		margin: -11px 0 0 -11px;
+		font-size: 9px;
+	}
+
+	.masterplan-tooltip{
+		width: 200px;
+		padding: 14px;
+	}
+
+	.location-3d-pin{
+		min-height: 560px;
+	}
+
+	.location-3d-plane{
+		width: 128vw;
+	}
+
+	.location-3d-intro{
+		top: 10vh;
+	}
+
+	.location-3d-list{
+		grid-template-columns: 1fr 1fr;
+		gap: 0 14px;
+	}
+
+	.loc-pin-label small,
+	.loc-pin.is-local .loc-pin-label b,
+	.loc-pin.is-destination .loc-pin-label b{
+		display: none;
+	}
+
+	.loc-pin.is-local .loc-pin-label,
+	.loc-pin.is-destination .loc-pin-label{
+		padding: 5px;
+	}
+
+	/* taller stem lifts the farm label clear of the nearby pins */
+	.loc-pin.is-farm{
+		--stem: 160px !important;
+	}
+
+	.loc-pin.is-farm .loc-pin-label{
+		padding: 8px 14px 8px 8px;
+	}
+
+	.loc-pin.is-farm .loc-pin-label i{
+		width: 28px;
+		height: 28px;
+		font-size: 12px;
+	}
+
+	.loc-pin.is-farm .loc-pin-label b{
+		font-size: 14px;
+	}
+
+}
+
+/* clouds sit under the plot markers inside the ported masterplan */
+.masterplan-map .mp-clouds{ z-index:0; border-radius:inherit; }
+.masterplan-map .masterplan-markers{ z-index:2; }
+.masterplan-map .mp-clouds .cloud,
+.masterplan-map .mp-clouds .cloud-shadow{ opacity:.6; }
+/* ---------------------------------------------------------------------------
+   Layout: the ported markup uses Bootstrap's grid classes, which don't exist
+   in this project. Provide the handful it needs, scoped to .masterplan.
+   --------------------------------------------------------------------------- */
+
+.masterplan .container{
+	width:100%;
+	max-width:1440px;
+	margin:0 auto;
+	padding:0 clamp(20px,5vw,80px);
+}
+
+.masterplan .row{
+	display:flex;
+	flex-wrap:wrap;
+	align-items:center;
+}
+
+.masterplan .col-xl-5,
+.masterplan .col-xl-7{
+	flex:0 0 auto;
+}
+
+.masterplan .col-xl-5{
+	width:41.6667%;
+	max-width:41.6667%;
+	padding-right:clamp(20px,3vw,52px);
+}
+
+.masterplan .col-xl-7{
+	width:58.3333%;
+	max-width:58.3333%;
+}
+
+.masterplan-content{
+	margin-right:0;
+	min-width:0;
+}
+
+.masterplan-map-box,
+.masterplan-map{
+	width:100%;
+}
+
+.masterplan .masterplan-title{
+	font-size:clamp(40px,4.4vw,64px);
+}
+
+.masterplan .section-sub-title{
+	display:inline-block;
+	margin-bottom:14px;
+}
+
+.masterplan .section-title p{
+	max-width:46ch;
+}
+
+@media (max-width:1199px){
+
+	.masterplan .col-xl-5,
+	.masterplan .col-xl-7{
+		width:100%;
+		max-width:100%;
+		padding-right:0;
+	}
+
+	.masterplan .col-xl-5{
+		margin-bottom:clamp(32px,4vw,52px);
+	}
+
+	.masterplan .masterplan-title{
+		font-size:clamp(34px,6vw,54px);
+	}
+}
+
+@media (max-width:640px){
+
+	.masterplan{
+		padding:64px 0;
+	}
+
+	.masterplan .masterplan-title{
+		font-size:clamp(30px,8vw,42px);
+	}
+}
+/* ---------------------------------------------------------------------------
+   Fly-over video: plays over the plan, then transforms into the illustration
+   (these rules lived in the old project's premium.css)
+   --------------------------------------------------------------------------- */
+
+.masterplan-video{
+	position:absolute;
+	inset:0;
+	width:100%;
+	height:100%;
+	object-fit:cover;
+	opacity:1;
+	transform:scale(1);
+	transform-origin:50% 50%;
+	filter:blur(0);
+	transition:opacity 1s ease,transform 1.2s cubic-bezier(0.22,1,0.36,1),filter 1s ease;
+	will-change:transform,opacity;
+	pointer-events:none;
+}
+
+.masterplan-video.is-done{
+	opacity:0;
+	transform:scale(1.14);
+	filter:blur(6px);
+}
+
+.masterplan-map > img{
+	transform:scale(1.06);
+	transition:transform 1.6s cubic-bezier(0.22,1,0.36,1);
+}
+
+.masterplan-map.is-plan-visible > img{
+	transform:scale(1);
+}
+
+@media (prefers-reduced-motion: reduce){
+	.masterplan-video,
+	.masterplan-map > img{
+		transform:none;
+		filter:none;
+		transition:none;
+	}
+}
+/* ---------------------------------------------------------------------------
+   Theme alignment: the ported block now speaks this site's type scale,
+   palette, radii and control styling.
+   --------------------------------------------------------------------------- */
+
+.masterplan{
+	padding:clamp(70px,8vw,120px) 0;
+}
+
+/* eyebrow ? matches .eyebrow elsewhere */
+.masterplan .section-sub-title{
+	display:inline-flex;
+	align-items:center;
+	gap:14px;
+	font-family:var(--sans);
+	font-size:10.5px;
+	font-weight:600;
+	letter-spacing:.38em;
+	text-transform:uppercase;
+	color:var(--moss);
+	margin-bottom:26px;
+}
+
+.masterplan .section-sub-title::before{
+	content:"";
+	width:48px;
+	height:1px;
+	background:currentColor;
+}
+
+.masterplan .masterplan-title{
+	font-family:var(--serif);
+	font-size:clamp(38px,4.6vw,66px);
+	line-height:1.03;
+	letter-spacing:-.012em;
+	color:var(--ink);
+	margin:0 0 24px;
+}
+
+.masterplan .masterplan-title em{
+	color:var(--mango-d);
+	font-style:italic;
+}
+
+.masterplan .section-title p{
+	font-size:clamp(15.5px,1.25vw,18px);
+	line-height:1.85;
+	color:var(--mute);
+	max-width:44ch;
+	margin:0 0 36px;
+}
+
+/* availability */
+.masterplan .masterplan-progress{
+	height:2px;
+	background:var(--line);
+	margin:0 0 20px;
+	overflow:hidden;
+}
+
+.masterplan .masterplan-progress-bar{
+	display:block;
+	height:100%;
+	background:var(--wine);
+	transition:width .6s var(--ease);
+}
+
+.masterplan .masterplan-remaining{
+	display:flex;
+	align-items:baseline;
+	flex-wrap:wrap;
+	gap:10px;
+	font-size:13.5px;
+	color:var(--mute);
+	margin:0;
+}
+
+.masterplan .masterplan-remaining-count{
+	font-family:var(--serif);
+	font-size:clamp(38px,3.6vw,54px);
+	line-height:.9;
+	color:var(--wine);
+}
+
+/* legend */
+.masterplan .masterplan-legend{
+	display:flex;
+	flex-wrap:wrap;
+	gap:20px;
+	list-style:none;
+	margin:26px 0 36px;
+	padding:0;
+}
+
+.masterplan .masterplan-legend li{
+	display:flex;
+	align-items:center;
+	gap:9px;
+	font-size:10.5px;
+	letter-spacing:.2em;
+	text-transform:uppercase;
+	color:var(--mute);
+}
+
+.masterplan .dot{
+	width:9px;
+	height:9px;
+	border-radius:50%;
+	display:block;
+	flex:0 0 9px;
+}
+
+.masterplan .dot.is-available{ background:var(--plot-available); }
+.masterplan .dot.is-reserved{ background:var(--plot-reserved); }
+.masterplan .dot.is-sold{ background:var(--plot-sold); }
+
+/* filters */
+.masterplan .masterplan-filter h3{
+	font-family:var(--sans);
+	font-size:10.5px;
+	font-weight:600;
+	letter-spacing:.28em;
+	text-transform:uppercase;
+	color:var(--manuscript);
+	margin:0 0 16px;
+}
+
+.masterplan .masterplan-filter-list{
+	display:flex;
+	flex-wrap:wrap;
+	gap:10px;
+}
+
+.masterplan .masterplan-filter-list button{
+	padding:11px 22px;
+	border:1px solid var(--line);
+	border-radius:999px;
+	background:transparent;
+	color:var(--ink);
+	font-family:var(--sans);
+	font-size:11px;
+	font-weight:500;
+	letter-spacing:.14em;
+	text-transform:uppercase;
+	cursor:pointer;
+	transition:.35s var(--ease);
+}
+
+.masterplan .masterplan-filter-list button:hover{
+	border-color:var(--wine);
+	color:var(--wine);
+}
+
+.masterplan .masterplan-filter-list button.is-active{
+	background:var(--wine);
+	border-color:var(--wine);
+	color:var(--cream);
+}
+
+/* map card */
+.masterplan .masterplan-map-box{
+	border:1px solid var(--line);
+	border-radius:20px;
+	background:var(--white-color);
+	box-shadow:0 26px 60px -42px rgba(21,18,18,.55);
+	overflow:hidden;
+}
+
+.masterplan .masterplan-map-header{
+	padding:16px 22px;
+	margin:0;
+	border-bottom:1px solid var(--line);
+	font-family:var(--sans);
+	font-size:10px;
+	font-weight:600;
+	letter-spacing:.3em;
+	text-transform:uppercase;
+	color:var(--manuscript);
+}
+
+.masterplan .masterplan-expand{
+	display:inline-flex;
+	align-items:center;
+	gap:8px;
+	padding:8px 16px;
+	border:1px solid var(--line);
+	border-radius:999px;
+	background:transparent;
+	color:var(--ink);
+	cursor:pointer;
+	font-family:var(--sans);
+	font-size:10px;
+	font-weight:600;
+	letter-spacing:.18em;
+	text-transform:uppercase;
+	transition:.35s var(--ease);
+}
+
+.masterplan .masterplan-expand:hover{
+	background:var(--wine);
+	border-color:var(--wine);
+	color:var(--cream);
+}
+
+.masterplan .masterplan-expand i{
+	font-size:11px;
+}
+
+.masterplan .masterplan-map{
+	border-radius:0;
+	box-shadow:none;
+}
+
+.masterplan .masterplan-hint{
+	font-family:var(--sans);
+	font-size:12px;
+	letter-spacing:.04em;
+	color:var(--mute);
+	text-align:center;
+	margin:16px 0 0;
+	opacity:1;
+}
+
+/* tooltip */
+.masterplan .masterplan-tooltip{
+	background:var(--paper);
+	border:1px solid var(--line);
+	border-radius:14px;
+	box-shadow:0 24px 50px -30px rgba(21,18,18,.6);
+	color:var(--ink);
+}
+
+.masterplan .masterplan-tooltip-head h4{
+	font-family:var(--serif);
+	font-size:20px;
+	color:var(--ink);
+}
+
+.masterplan .masterplan-tooltip-status{
+	font-size:10.5px;
+	letter-spacing:.18em;
+	text-transform:uppercase;
+	color:var(--mute);
+}
+
+.masterplan .masterplan-tooltip ul li{
+	font-size:12.5px;
+	color:var(--mute);
+}
+
+.masterplan .masterplan-tooltip ul li span:last-child{
+	color:var(--ink);
+}
+
+.masterplan .masterplan-tooltip a{
+	font-size:11px;
+	letter-spacing:.14em;
+	text-transform:uppercase;
+	color:var(--wine);
+}
+/* align the ported block with the rest of the page: same inset, same rhythm */
+.masterplan{
+	padding:clamp(80px,10vw,140px) 0;
+}
+
+.masterplan .container{
+	max-width:none;
+	padding:0 var(--pad);
+}
+/* give the copy column a little more room so it reads like the other sections */
+.masterplan .col-xl-5{
+	width:46%;
+	max-width:46%;
+}
+
+.masterplan .col-xl-7{
+	width:54%;
+	max-width:54%;
+}
+
+.masterplan .masterplan-title{
+	font-size:clamp(36px,4.4vw,64px);
+}
+/* ---------------------------------------------------------------------------
+   Two-column fix: the columns were wrapping (46% + 54% rounding under
+   flex-wrap), which pushed the map below the copy. Lock the split on desktop,
+   stack below it, and drop the marker-hover zoom.
+   --------------------------------------------------------------------------- */
+
+@media (min-width:1200px){
+	.masterplan .row{
+		flex-wrap:nowrap;
+		align-items:flex-start;
+	}
+
+	.masterplan .col-xl-5{
+		width:46%;
+		max-width:46%;
+		flex:0 0 46%;
+		min-width:0;
+		padding-right:clamp(28px,3.4vw,64px);
+	}
+
+	.masterplan .col-xl-7{
+		width:54%;
+		max-width:54%;
+		flex:0 0 54%;
+		min-width:0;
+	}
+}
+
+@media (max-width:1199px){
+	.masterplan .col-xl-5,
+	.masterplan .col-xl-7{
+		width:100%;
+		max-width:100%;
+		flex:1 1 auto;
+	}
+}
+
+/* no hover drift on the plan */
+.masterplan .masterplan-map.has-focus > img{
+	transform:none;
+}
+/* match the heading weight of the neighbouring sections */
+.masterplan .masterplan-title{
+	font-size:clamp(38px,5vw,78px);
+	line-height:1.02;
+}
+/* The site has a generic .row:hover (built for the amenity rows) that indents
+   and tints any .row — the ported masterplan uses .row for its grid, so that
+   rule was nudging the whole block on hover. Neutralise it here. */
+.masterplan .row,
+.masterplan .row:hover{
+	padding-left:0;
+	background:transparent;
+	box-shadow:none;
+}
+/* Full-width header: the title reads on one line at 83.808px, and the two
+   columns below start together so the map lines up with the paragraph. */
+.masterplan-head{
+	margin-bottom:clamp(26px,3vw,44px);
+}
+
+.masterplan .masterplan-head .section-sub-title{
+	margin-bottom:18px;
+}
+
+.masterplan .masterplan-title{
+	font-size:clamp(34px,7.4vw,83.808px);
+	line-height:1.02;
+	letter-spacing:-.018em;
+	white-space:nowrap;
+	margin:0;
+	display:block;
+}
+
+.masterplan .row{
+	align-items:flex-start;
+}
+
+@media (max-width:1180px){
+	.masterplan .masterplan-title{
+		white-space:normal;
+		font-size:clamp(34px,6.4vw,72px);
+	}
+}
+/* ---------------------------------------------------------------------------
+   Bigger map on desktop, tighter copy column
+   --------------------------------------------------------------------------- */
+
+@media (min-width:1200px){
+
+	.masterplan .col-xl-5{
+		width:42%;
+		max-width:42%;
+		flex:0 0 42%;
+	}
+
+	.masterplan .col-xl-7{
+		width:58%;
+		max-width:58%;
+		flex:0 0 58%;
+	}
+}
+
+.masterplan .masterplan-availability{
+	margin-bottom:26px;
+}
+
+.masterplan .masterplan-legend{
+	margin:20px 0 28px;
+}
+
+/* ---------------------------------------------------------------------------
+   Expanded map: keep the overlay dark so the header, hint and close control
+   stay legible (a later white background was hiding them)
+   --------------------------------------------------------------------------- */
+
+.masterplan .masterplan-map-box.is-expanded{
+	background:rgba(21,18,18,.96);
+}
+
+.masterplan .masterplan-map-box.is-expanded .masterplan-map-header{
+	background:transparent;
+	border-bottom-color:rgba(228,213,188,.22);
+}
+
+.masterplan .masterplan-map-box.is-expanded .masterplan-map-header > span{
+	color:var(--cream);
+	opacity:1;
+}
+
+.masterplan .masterplan-map-box.is-expanded .masterplan-expand{
+	background:transparent;
+	border-color:rgba(228,213,188,.45);
+	color:var(--cream);
+}
+
+.masterplan .masterplan-map-box.is-expanded .masterplan-expand:hover{
+	background:var(--cream);
+	border-color:var(--cream);
+	color:var(--wine);
+}
+
+.masterplan .masterplan-map-box.is-expanded .masterplan-hint{
+	color:rgba(228,213,188,.85);
+	padding:6px 0 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Tooltip: never wider than the map, and let long values wrap
+   --------------------------------------------------------------------------- */
+
+.masterplan .masterplan-tooltip{
+	width:min(244px,calc(100% - 24px));
+	padding:16px;
+}
+
+.masterplan .masterplan-tooltip li{
+	gap:12px;
+	font-size:13px;
+	align-items:baseline;
+}
+
+.masterplan .masterplan-tooltip li span:first-child{
+	flex:0 0 auto;
+	color:var(--mute);
+}
+
+.masterplan .masterplan-tooltip li span:last-child{
+	max-width:58%;
+	text-align:right;
+	overflow-wrap:anywhere;
+}
+/* Let the copy column span the map's height and park the filter row at its
+   foot, so there's no dead space under "Filter by cluster". */
+@media (min-width:1200px){
+
+	.masterplan .row{
+		align-items:stretch;
+	}
+
+	.masterplan .col-xl-5{
+		display:flex;
+		flex-direction:column;
+	}
+
+	.masterplan .masterplan-content{
+		display:flex;
+		flex-direction:column;
+		flex:1 1 auto;
+		height:100%;
+	}
+}
+
+.masterplan .masterplan-filter{
+	margin-top:auto;
+}
+/* Tooltip readability: wider card, labels and values on one line each */
+.masterplan .masterplan-tooltip{
+	width:min(330px,calc(100% - 20px));
+	padding:20px;
+}
+
+.masterplan .masterplan-tooltip li{
+	gap:16px;
+	font-size:13.5px;
+	line-height:1.45;
+	align-items:baseline;
+	flex-wrap:nowrap;
+}
+
+.masterplan .masterplan-tooltip li span:first-child{
+	flex:0 0 auto;
+	white-space:nowrap;
+	color:var(--mute);
+}
+
+.masterplan .masterplan-tooltip li span:last-child{
+	flex:1 1 auto;
+	max-width:none;
+	text-align:right;
+	overflow-wrap:normal;
+	word-break:normal;
+	hyphens:none;
+}
+
+.masterplan .masterplan-tooltip-head h4{
+	font-size:22px;
+}
+
+.masterplan .masterplan-tooltip-status{
+	font-size:10.5px;
+	letter-spacing:.16em;
+	white-space:nowrap;
+}
+
+.masterplan .masterplan-tooltip a{
+	white-space:nowrap;
+	font-size:10.5px;
+	letter-spacing:.16em;
+}
+/* Keep the compact card; stack each label above its value instead of
+   squeezing them onto one line. */
+.masterplan .masterplan-tooltip{
+	width:230px;
+	padding:18px;
+}
+
+.masterplan .masterplan-tooltip ul{
+	padding-top:12px;
+}
+
+.masterplan .masterplan-tooltip li{
+	display:block;
+	padding:7px 0;
+	font-size:13.5px;
+	line-height:1.45;
+}
+
+.masterplan .masterplan-tooltip li span{
+	display:block;
+}
+
+.masterplan .masterplan-tooltip li span:first-child{
+	font-size:10px;
+	letter-spacing:.16em;
+	text-transform:uppercase;
+	color:var(--mute);
+	margin-bottom:2px;
+	white-space:nowrap;
+}
+
+.masterplan .masterplan-tooltip li span:last-child{
+	font-size:14px;
+	font-weight:600;
+	color:var(--ink);
+	text-align:left;
+	max-width:none;
+	overflow-wrap:normal;
+}
+
+.masterplan .masterplan-tooltip-head{
+	gap:10px;
+	align-items:flex-start;
+}
+
+.masterplan .masterplan-tooltip-head h4{
+	font-size:20px;
+	line-height:1.1;
+}
+
+.masterplan .masterplan-tooltip-status{
+	font-size:9.5px;
+	letter-spacing:.12em;
+	margin-top:4px;
+}
+/* ---------------------------------------------------------------------------
+   Tooltip: the reference layout — label left, value right on one line,
+   divider under the header, enquiry link at the foot.
+   The dashes came from a generic site rule (.row li:before adds an em dash),
+   so it is switched off inside the masterplan.
+   --------------------------------------------------------------------------- */
+
+.masterplan .row li:before{
+	content:none;
+}
+
+.masterplan .masterplan-tooltip{
+	width:252px;
+	padding:18px 20px;
+}
+
+.masterplan .masterplan-tooltip-head{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:10px;
+	padding-bottom:12px;
+	margin-bottom:12px;
+	border-bottom:1px solid var(--line);
+}
+
+.masterplan .masterplan-tooltip-head h4{
+	font-size:20px;
+	font-weight:600;
+	line-height:1.1;
+	color:var(--ink);
+}
+
+.masterplan .masterplan-tooltip-status{
+	font-size:9.5px;
+	letter-spacing:.14em;
+	white-space:nowrap;
+	color:var(--mute);
+	margin:0;
+}
+
+.masterplan .masterplan-tooltip-status .dot{
+	width:8px;
+	height:8px;
+	flex:0 0 8px;
+}
+
+.masterplan .masterplan-tooltip ul{
+	border-top:0;
+	padding:0;
+}
+
+.masterplan .masterplan-tooltip li{
+	display:flex;
+	align-items:baseline;
+	justify-content:space-between;
+	gap:12px;
+	padding:5px 0;
+	font-size:13.5px;
+	line-height:1.5;
+}
+
+.masterplan .masterplan-tooltip li span{
+	display:inline;
+}
+
+.masterplan .masterplan-tooltip li span:first-child{
+	font-size:13.5px;
+	letter-spacing:0;
+	text-transform:none;
+	color:var(--mute);
+	margin:0;
+	white-space:nowrap;
+}
+
+.masterplan .masterplan-tooltip li span:last-child{
+	font-size:13.5px;
+	font-weight:600;
+	color:var(--wine);
+	text-align:right;
+	white-space:nowrap;
+	max-width:none;
+}
+
+.masterplan .masterplan-tooltip a{
+	display:inline-flex;
+	align-items:center;
+	gap:8px;
+	margin-top:14px;
+	font-size:10.5px;
+	letter-spacing:.14em;
+	text-transform:uppercase;
+	color:var(--wine);
+	white-space:nowrap;
+}
+/* The site's generic .row ul is a two-column list (built for the amenity
+   rows) — inside the masterplan it split the tooltip rows into two columns.
+   Force a single column so Size / Cluster / Facing each get their own row. */
+.masterplan .row ul,
+.masterplan .masterplan-tooltip ul{
+	columns:auto;
+	column-gap:0;
+}
+
+.masterplan .masterplan-tooltip ul{
+	display:block;
+}
+
+.masterplan .masterplan-tooltip li{
+	display:flex;
+	width:100%;
+}
