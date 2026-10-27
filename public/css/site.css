@@ -59,7 +59,7 @@ section{position:relative}
 
 /* nav */
 header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:22px var(--pad);color:var(--cream);transition:.6s var(--ease)}
-header.solid{background:rgba(49,54,38,.92);backdrop-filter:blur(14px);padding-top:14px;padding-bottom:14px}
+header.solid{background:rgba(21,18,18,.28);-webkit-backdrop-filter:blur(18px) saturate(125%);backdrop-filter:blur(18px) saturate(125%);border-bottom:1px solid rgba(228,213,188,.14);padding-top:14px;padding-bottom:14px}
 header.hide{transform:translateY(-100%)}
 .logo img{height:46px;width:auto}
 .nav-r{display:flex;align-items:center;gap:28px}
@@ -1081,4 +1081,44 @@ body.menu-dismiss #menu{
 			linear-gradient(90deg, rgba(21,18,18,.6) 0%, rgba(21,18,18,.32) 34%, rgba(21,18,18,.06) 62%, rgba(21,18,18,.34) 100%),
 			linear-gradient(to top, rgba(21,18,18,.52) 0%, rgba(21,18,18,0) 42%);
 	}
+}
+
+/* header CTA: bordeaux with white text */
+header#hdr .btn.solid{
+	background: #581C1E;
+	border-color: #581C1E;
+	color: #fff;
+}
+
+header#hdr .btn.solid:hover{
+	background: #6E2326;
+	border-color: #6E2326;
+	color: #fff;
+}
+
+/* scrolled header: frosted glass instead of the olive bar */
+header#hdr.solid{
+	background: rgba(21, 18, 18, .28);
+	-webkit-backdrop-filter: blur(18px) saturate(125%);
+	backdrop-filter: blur(18px) saturate(125%);
+	border-bottom: 1px solid rgba(228, 213, 188, .14);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+	header#hdr.solid{
+		background: rgba(21, 18, 18, .78);
+	}
+}
+
+/* hero primary CTA: bordeaux with white text, matching the header */
+.hero .cta .btn.solid{
+	background: #581C1E;
+	border-color: #581C1E;
+	color: #fff;
+}
+
+.hero .cta .btn.solid:hover{
+	background: #6E2326;
+	border-color: #6E2326;
+	color: #fff;
 }
