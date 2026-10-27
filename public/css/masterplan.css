@@ -2430,3 +2430,72 @@ body.masterplan-lock{
 .location-3d-panel h3{
 	font-size: clamp(20px, 1.6vw, 26px);
 }
+
+
+/* ---- mobile: full-height map, readable intro, compact overlay card ---- */
+@media (max-width: 900px){
+
+	.location-3d-pin{
+		display: block;
+	}
+
+	.location-3d-pin > .location-3d-stage{
+		position: absolute;
+		inset: 0;
+	}
+
+	.location-3d-stage{
+		--ty: 4;
+		--s: 0.62;
+	}
+
+	.location-3d-intro{
+		top: 7vh;
+		padding: 18px 24px 46px;
+		background: linear-gradient(to bottom, rgba(10, 8, 8, .9) 0%, rgba(10, 8, 8, .65) 55%, rgba(10, 8, 8, 0) 100%);
+	}
+
+	.location-3d-intro h2{
+		font-size: clamp(26px, 8vw, 38px);
+		line-height: 1.08;
+	}
+
+	.location-3d-pin > .location-3d-panel{
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		gap: 6px;
+		padding: 16px 20px 18px;
+		max-height: 46vh;
+		overflow-y: auto;
+	}
+
+	.location-3d-panel .location-3d-eyebrow{
+		margin-bottom: 2px;
+	}
+
+	.location-3d-panel h3{
+		font-size: clamp(17px, 5vw, 21px);
+		line-height: 1.15;
+	}
+
+	.location-3d-panel > .location-3d-list{
+		grid-template-columns: 1fr 1fr;
+		gap: 2px 16px;
+		margin-top: 8px;
+	}
+
+	.location-3d-panel > .location-3d-list li{
+		padding: 6px 0;
+		border-bottom: 0;
+	}
+
+	.location-3d-panel > .btn-default.btn-highlighted{
+		margin-top: 10px;
+		padding: 12px 18px;
+		font-size: 10px;
+	}
+}

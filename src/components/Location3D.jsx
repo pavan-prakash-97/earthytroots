@@ -322,7 +322,7 @@ export default function Location3D() {
 				});
 
 				if (panel) {
-					const panelT = clamp01((p - 0.84) / 0.1);
+					const panelT = clamp01((p - 0.86) / 0.06);
 					const panelEase = easeOutCubic(panelT);
 					panel.style.opacity = String(panelEase);
 					panel.style.visibility = panelEase > 0.001 ? "visible" : "hidden";
@@ -330,9 +330,9 @@ export default function Location3D() {
 				}
 
 				if (list) {
-					const itemStep = list.children.length > 1 ? 0.11 / (list.children.length - 1) : 0;
+					const itemStep = list.children.length > 1 ? 0.09 / (list.children.length - 1) : 0;
 					Array.prototype.forEach.call(list.children, function (li, i) {
-						const itemT = clamp01((p - (0.84 + i * itemStep)) / 0.05);
+						const itemT = clamp01((p - (0.87 + i * itemStep)) / 0.035);
 						const itemEase = easeOutCubic(itemT);
 						li.style.opacity = String(itemEase);
 						li.style.visibility = itemEase > 0.001 ? "visible" : "hidden";
