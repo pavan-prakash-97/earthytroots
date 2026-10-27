@@ -1013,3 +1013,72 @@ body.menu-dismiss #menu{
 	height: clamp(68px, 6vw, 88px);
 	margin-bottom: 26px;
 }
+
+/* desktop: the clip fills the hero instead of the arched card */
+@media (min-width: 901px){
+
+	.hero .hframe{
+		inset: 0;
+		right: auto;
+		top: 0;
+		transform: none;
+		height: 100%;
+		width: 100%;
+		aspect-ratio: auto;
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	.hero .hframe video{
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* the still + ken-burns layer is redundant behind a full-bleed clip */
+	.hero.vid .bg,
+	.hero .bg{
+		opacity: 0;
+		animation: none;
+	}
+
+	.hero-in > div:first-child{
+		max-width: min(760px, 60vw);
+	}
+}
+
+
+/* hero copy: stronger scrim and text shadows so it stays legible on video */
+@media (min-width: 901px){
+
+	.hero:after{
+		background:
+			linear-gradient(90deg, rgba(21,18,18,.86) 0%, rgba(21,18,18,.62) 38%, rgba(21,18,18,.18) 66%, rgba(21,18,18,.55) 100%),
+			linear-gradient(to top, rgba(21,18,18,.88) 2%, rgba(21,18,18,0) 48%);
+	}
+
+	.hero-in h1{
+		text-shadow: 0 2px 34px rgba(21,18,18,.55), 0 1px 3px rgba(21,18,18,.45);
+	}
+
+	.hero-in p,
+	.hero-in .tagline{
+		text-shadow: 0 1px 20px rgba(21,18,18,.6);
+	}
+
+	.hero-in .eyebrow{
+		color: var(--cream);
+		text-shadow: 0 1px 16px rgba(21,18,18,.65);
+		opacity: .95;
+	}
+}
+
+/* lighter scrim: let the footage breathe, keep the text shadows doing the work */
+@media (min-width: 901px){
+
+	.hero:after{
+		background:
+			linear-gradient(90deg, rgba(21,18,18,.6) 0%, rgba(21,18,18,.32) 34%, rgba(21,18,18,.06) 62%, rgba(21,18,18,.34) 100%),
+			linear-gradient(to top, rgba(21,18,18,.52) 0%, rgba(21,18,18,0) 42%);
+	}
+}

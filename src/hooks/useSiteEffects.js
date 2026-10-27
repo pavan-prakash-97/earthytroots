@@ -139,9 +139,15 @@ function initHero(root, cleanups) {
   const bar = root.querySelector("#hbar")
   const canvas = root.querySelector("#hbg")
   const segs = Array.from(root.querySelectorAll("#hseg i"))
-  if (!hero || !video || !canvas || !segs.length) return
+  if (!hero || !video) return
 
-  const clips = [1, 2, 3, 4].map((n) => `${import.meta.env.BASE_URL}videos/hero-${n}.mp4`)
+  /* the blurred canvas backdrop is gone */
+  if (canvas) canvas.style.display = "none"
+
+  const mobileQuery = window.matchMedia("(max-width: 900px)")
+  const DESKTOP_SRC = `${import.meta.env.BASE_URL}videos/web-intro.mp4`
+  const MOBILE_CLIPS = [1, 2, 3, 4].map((n) => `${import.meta.env.BASE_URL}videos/hero-${n}.mp4`)
+
   const skip =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
     Boolean(navigator.connection && navigator.connection.saveData)
@@ -150,19 +156,19 @@ function initHero(root, cleanups) {
     hero.classList.remove("vid")
     if (bar) bar.hidden = true
     video.style.display = "none"
-    canvas.style.display = "none"
   }
   if (skip) {
     drop()
     return
   }
 
-  const ctx = canvas.getContext("2d")
+  let sequence = mobileQuery.matches
   let index = 0
   let paused = false
   let fails = 0
-  let raf = 0
   let disposed = false
+
+  const clipsFor = () => (sequence ? MOBILE_CLIPS : [DESKTOP_SRC])
 
   const mark = () =>
     segs.forEach((seg, k) => {
@@ -170,9 +176,24 @@ function initHero(root, cleanups) {
       seg.style.setProperty("--p", 0)
     })
 
+  const applyMode = () => {
+    const seq = mobileQuery.matches
+    if (seq === sequence) return
+    sequence = seq
+    fails = 0
+    load(0)
+  }
+
   const load = (n) => {
+    const clips = clipsFor()
     index = (n + clips.length) % clips.length
+    video.loop = !sequence
     video.src = clips[index]
+    if (segs.length) {
+      segs.forEach((seg) => {
+        seg.style.display = sequence ? "" : "none"
+      })
+    }
     mark()
     const played = video.play()
     if (played && played.catch) played.catch(() => {})
@@ -180,25 +201,30 @@ function initHero(root, cleanups) {
 
   const onPlaying = () => {
     hero.classList.add("vid")
-    if (bar) bar.hidden = false
+    if (bar) bar.hidden = !sequence
     fails = 0
   }
-  const onEnded = () => load(index + 1)
+  const onEnded = () => {
+    if (sequence) load(index + 1)
+  }
   const onError = () => {
-    if (++fails >= clips.length) {
+    if (++fails >= clipsFor().length) {
       drop()
       return
     }
     load(index + 1)
   }
   const onTime = () => {
-    if (video.duration) segs[index].style.setProperty("--p", String(video.currentTime / video.duration))
+    if (!sequence || !video.duration) return
+    const seg = segs[index]
+    if (seg) seg.style.setProperty("--p", String(video.currentTime / video.duration))
   }
 
   video.addEventListener("playing", onPlaying)
   video.addEventListener("ended", onEnded)
   video.addEventListener("error", onError)
   video.addEventListener("timeupdate", onTime)
+  mobileQuery.addEventListener("change", applyMode)
 
   const segHandlers = segs.map((seg, k) => {
     const handler = () => load(k)
@@ -217,19 +243,6 @@ function initHero(root, cleanups) {
     if (toggle) toggle.textContent = paused ? "Play" : "Pause"
   }
   if (toggle) toggle.addEventListener("click", onToggle)
-
-  const paint = () => {
-    if (disposed) return
-    if (!video.paused && !video.ended && video.readyState > 1 && window.innerWidth > 980) {
-      try {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-      } catch {
-        /* frame not ready */
-      }
-    }
-    raf = requestAnimationFrame(paint)
-  }
-  raf = requestAnimationFrame(paint)
 
   const io = new IntersectionObserver(
     (entries) =>
@@ -253,8 +266,8 @@ function initHero(root, cleanups) {
   cleanups.push(() => {
     disposed = true
     window.clearTimeout(failTimer)
-    cancelAnimationFrame(raf)
     io.disconnect()
+    mobileQuery.removeEventListener("change", applyMode)
     video.removeEventListener("playing", onPlaying)
     video.removeEventListener("ended", onEnded)
     video.removeEventListener("error", onError)

@@ -14,7 +14,6 @@ export default function Index() {
       <div className="hframe"><video id="hv" muted playsInline autoPlay preload="auto" aria-hidden="true"></video></div>
       <div className="hbar" id="hbar" hidden>
         <div className="hseg" id="hseg"><i></i><i></i><i></i><i></i></div>
-        <button className="vctl" id="vc" aria-label="Pause background video">Pause</button>
       </div>
       <div className="hero-in">
         <div>
