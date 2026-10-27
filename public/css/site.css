@@ -1000,3 +1000,16 @@ body.menu-dismiss #menu{
 	max-width: 100%;
 	margin-bottom: 22px;
 }
+/* larger top-bar wordmark */
+.logo .logo-img{
+	height: clamp(30px, 2.6vw, 38px);
+}
+/* a little larger again */
+.logo .logo-img{
+	height: clamp(34px, 3vw, 44px);
+}
+/* footer wordmark at twice the top-bar size */
+#footer .f-mark-img{
+	height: clamp(68px, 6vw, 88px);
+	margin-bottom: 26px;
+}
