@@ -174,5 +174,10 @@ export const DESTINATIONS = [
 	{ x: 14, y: 1, icon: "fa-road", name: "NH-44 Highway", km: 6, mins: 10 },
 	{ x: 80, y: 4, icon: "fa-mountain-sun", name: "Nandi Hills", km: 22, mins: 35 },
 	{ x: 93, y: 42, icon: "fa-plane-departure", name: "Bengaluru Airport", km: 38, mins: 50, stem: 140 },
-	{ x: 74, y: 94, icon: "fa-city", name: "Bengaluru City", km: 58, mins: 75 }
+	{ x: 74, y: 94, icon: "fa-city", name: "Bengaluru City", km: 58, mins: 75 },
+	{ x: 96, y: 68, icon: "fa-road", name: "Nice Road", km: 65, mins: 90 },
+	{ x: 62, y: 4, icon: "fa-spa", name: "Art of Living", km: 55, mins: 75 },
+	{ x: 26, y: 92, icon: "fa-hospital", name: "Dayanand Sagar Medical College, Harohalli", km: 33, mins: 45 },
+	{ x: 2, y: 24, icon: "fa-user-doctor", name: "Kanakapura Medical College", km: 22, mins: 35 },
+	{ x: 5, y: 52, icon: "fa-location-dot", name: "NH-948 Sathnur", km: 4, mins: 7 }
 ];

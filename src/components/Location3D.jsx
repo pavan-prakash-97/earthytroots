@@ -21,7 +21,7 @@ const PIN_DEFS = [
 		y: FARM.y,
 		icon: "fa-seedling",
 		stem: 120,
-		label: "EarthyRoots Farm",
+		label: "AAMRA",
 		sub: "You are here"
 	}
 ].concat(
@@ -305,17 +305,20 @@ export default function Location3D() {
 					applyPin(i + 1, at, 0.03, at, 0.05, at + 0.02, 0.05, 20);
 				});
 
+				/* spread the routes over a fixed share of the scroll so every
+				   destination is fully drawn, however many there are */
+				const destStep = DESTINATIONS.length > 1 ? 0.26 / (DESTINATIONS.length - 1) : 0;
+				const destWindow = 0.14;
+
 				DESTINATIONS.forEach(function (_, i) {
-					const at = 0.5 + i * 0.055;
+					const at = 0.44 + i * destStep;
 					const index = DESTINATION_OFFSET + i;
 					const base = bases[i];
 					if (base) {
-						/* a long, eased draw window: each route takes 0.22 of the
-						   section scroll and the last one lands near the end */
-						const routeT = clamp01((p - at) / 0.22);
+						const routeT = clamp01((p - at) / destWindow);
 						base.style.strokeDashoffset = String(1 - easeInOutQuad(routeT));
 					}
-					applyPin(index, at + 0.2, 0.03, at + 0.2, 0.04, at + 0.22, 0.05, 20);
+					applyPin(index, at + 0.11, 0.03, at + 0.11, 0.04, at + destWindow, 0.05, 20);
 				});
 
 				if (panel) {
@@ -327,8 +330,9 @@ export default function Location3D() {
 				}
 
 				if (list) {
+					const itemStep = list.children.length > 1 ? 0.11 / (list.children.length - 1) : 0;
 					Array.prototype.forEach.call(list.children, function (li, i) {
-						const itemT = clamp01((p - (0.88 + i * 0.015)) / 0.06);
+						const itemT = clamp01((p - (0.84 + i * itemStep)) / 0.05);
 						const itemEase = easeOutCubic(itemT);
 						li.style.opacity = String(itemEase);
 						li.style.visibility = itemEase > 0.001 ? "visible" : "hidden";
@@ -337,7 +341,7 @@ export default function Location3D() {
 				}
 
 				setRings(p > 0.36);
-				setRouted(p > 0.89);
+				setRouted(p > 0.82);
 			};
 
 			const update = function () {
@@ -461,6 +465,7 @@ export default function Location3D() {
 		[reduceMotion, canHover]
 	);
 
+
 	const sectionClass =
 		"location-3d" +
 		(reduceMotion ? " is-static" : "") +
@@ -469,7 +474,7 @@ export default function Location3D() {
 
 	const sectionStyle = reduceMotion
 		? undefined
-		: { height: isMobile ? "300vh" : "380vh" };
+		: { height: isMobile ? "420vh" : "540vh" };
 	const pinStyle = reduceMotion ? undefined : { position: "sticky", top: 0 };
 
 	return (

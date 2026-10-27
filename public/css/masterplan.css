@@ -2275,3 +2275,158 @@ body.masterplan-lock{
 		flex: 0 0 50%;
 	}
 }
+
+/* the Getting Here list now has nine entries: keep the card from overgrowing */
+.location-3d-list{
+	max-height: 44vh;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(228,213,188,.35) transparent;
+}
+
+.location-3d-list::-webkit-scrollbar{
+	width: 6px;
+}
+
+.location-3d-list::-webkit-scrollbar-thumb{
+	background: rgba(228,213,188,.3);
+	border-radius: 3px;
+}
+
+
+/* Getting Here card: same height as before, list scrolls instead of growing */
+.location-3d-panel{
+	height: min(72vh, 620px);
+	display: flex;
+	flex-direction: column;
+}
+
+.location-3d-panel > .location-3d-list{
+	flex: 1 1 auto;
+	overflow-y: auto;
+	max-height: none;
+	margin-bottom: 18px;
+	padding-right: 4px;
+}
+
+.location-3d-panel > .btn-default.btn-highlighted{
+	margin-top: auto;
+	align-self: flex-start;
+}
+
+
+/* Getting Here: full-width panel along the bottom, list laid out across the screen */
+.location-3d-panel{
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: auto;
+	height: auto;
+	border-radius: 0;
+	border-left: 0;
+	border-right: 0;
+	border-bottom: 0;
+	padding: clamp(22px, 2.4vw, 34px) clamp(20px, 5vw, 80px);
+	background: rgba(24, 6, 8, .78);
+	-webkit-backdrop-filter: blur(18px);
+	backdrop-filter: blur(18px);
+	display: grid;
+	grid-template-columns: minmax(220px, 320px) 1fr;
+	grid-template-rows: auto auto 1fr;
+	gap: 8px clamp(24px, 3vw, 52px);
+	align-items: start;
+}
+
+.location-3d-panel .location-3d-eyebrow{
+	grid-column: 1;
+	grid-row: 1;
+	margin-bottom: 6px;
+}
+
+.location-3d-panel h3{
+	grid-column: 1;
+	grid-row: 2;
+	margin: 0;
+}
+
+.location-3d-panel > .location-3d-list{
+	grid-column: 2;
+	grid-row: 1 / span 3;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 6px clamp(18px, 2.4vw, 40px);
+	max-height: none;
+	overflow: visible;
+	margin: 0;
+	padding: 0;
+}
+
+.location-3d-panel > .location-3d-list li{
+	border-bottom: 1px solid rgba(228, 213, 188, .14);
+	padding: 10px 0;
+}
+
+.location-3d-panel > .btn-default.btn-highlighted{
+	grid-column: 1;
+	grid-row: 3;
+	align-self: end;
+	justify-self: start;
+	margin-top: 16px;
+}
+
+@media (max-width: 1100px){
+
+	.location-3d-panel{
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+	}
+
+	.location-3d-panel .location-3d-eyebrow,
+	.location-3d-panel h3,
+	.location-3d-panel > .location-3d-list,
+	.location-3d-panel > .btn-default.btn-highlighted{
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	.location-3d-panel > .location-3d-list{
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		margin-top: 10px;
+	}
+}
+
+@media (max-width: 640px){
+
+	.location-3d-panel > .location-3d-list{
+		grid-template-columns: 1fr;
+	}
+}
+
+
+/* pin the map above the Getting Here bar instead of letting the bar cover it */
+.location-3d-pin{
+	display: flex;
+	flex-direction: column;
+}
+
+.location-3d-pin > .location-3d-stage{
+	position: relative;
+	inset: auto;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.location-3d-pin > .location-3d-panel{
+	position: static;
+	flex: 0 0 auto;
+}
+
+/* a touch more compact so the map keeps the greater share of the viewport */
+.location-3d-panel > .location-3d-list li{
+	padding: 8px 0;
+}
+
+.location-3d-panel h3{
+	font-size: clamp(20px, 1.6vw, 26px);
+}
