@@ -164,16 +164,12 @@ export const AMENITIES = [
 
 export const FARM = { x: 45, y: 50 };
 
-export const LOCAL_PINS = [
-	{ x: 57.5, y: 52, icon: "fa-house", name: "Clubhouse", stem: 48 },
-	{ x: 49, y: 82, icon: "fa-water", name: "Year-round stream", stem: 44 },
-	{ x: 84.3, y: 25.5, icon: "fa-binoculars", name: "Viewpoint deck", stem: 24 }
-];
+export const LOCAL_PINS = [];
 
 export const DESTINATIONS = [
-	{ x: 26, y: 8, icon: "fa-spa", name: "Art of Living", km: 55, mins: 75 },
-	{ x: 96, y: 58, icon: "fa-road", name: "Nice Road", km: 65, mins: 90 },
-	{ x: 6, y: 30, icon: "fa-user-doctor", name: "Kanakapura Medical College", km: 22, mins: 35 },
-	{ x: 68, y: 92, icon: "fa-location-dot", name: "NH-948 Sathnur", km: 4, mins: 7 },
-	{ x: 14, y: 80, icon: "fa-hospital", name: "Dayanand Sagar Medical College, Harohalli", km: 33, mins: 45 }
+	{ x: 16, y: 8, icon: "fa-spa", name: "Art of Living", km: 55, mins: 75 },
+	{ x: 86, y: 10, icon: "fa-road", name: "Nice Road", km: 65, mins: 90 },
+	{ x: 6, y: 50, icon: "fa-user-doctor", name: "Kanakapura Medical College", km: 22, mins: 35 },
+	{ x: 28, y: 94, icon: "fa-location-dot", name: "NH-948 Sathnur", km: 4, mins: 7 },
+	{ x: 72, y: 94, icon: "fa-hospital", name: "Dayanand Sagar Medical College, Harohalli", km: 33, mins: 45 }
 ];
