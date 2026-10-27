@@ -117,6 +117,59 @@ export default function Location3D() {
 	const sectionRef = useRef(null);
 	const stageRef = useRef(null);
 	const introRef = useRef(null);
+	/* horizontal drag: lets a phone user slide the map to read every chip */
+	const dragRef = useRef({ active: false, startX: 0, x: 0 });
+
+	const applyDrag = function () {
+		const stage = stageRef.current;
+		if (!stage) return;
+		const lift = typeof window !== "undefined" && window.innerWidth <= 900 ? " -7vh" : " 0px";
+		stage.style.transform = "translate3d(" + dragRef.current.x.toFixed(1) + "px," + lift + ", 0px)";
+	};
+
+	const onDragStart = function (e) {
+		if (window.innerWidth > 900) return;
+		dragRef.current.active = true;
+		dragRef.current.startX = e.clientX - dragRef.current.x;
+		if (e.currentTarget.setPointerCapture) {
+			try {
+				e.currentTarget.setPointerCapture(e.pointerId);
+			} catch {
+				/* ignore */
+			}
+		}
+	};
+
+	const onDragMove = function (e) {
+		const drag = dragRef.current;
+		if (!drag.active) return;
+		const max = window.innerWidth * 0.18;
+		drag.x = Math.max(-max, Math.min(max, e.clientX - drag.startX));
+		applyDrag();
+	};
+
+	const onDragEnd = function () {
+		dragRef.current.active = false;
+	};
+
+	/* lift the map on phones even before the first drag */
+	useEffect(function () {
+		const settle = function () {
+			if (window.innerWidth <= 900) {
+				applyDrag();
+			} else if (stageRef.current) {
+				dragRef.current.x = 0;
+				stageRef.current.style.transform = "";
+			}
+		};
+		settle();
+		window.addEventListener("resize", settle);
+		return function () {
+			window.removeEventListener("resize", settle);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	const panelRef = useRef(null);
 	const listRef = useRef(null);
 	const groundRefs = useRef([]);
@@ -296,6 +349,14 @@ export default function Location3D() {
 							"px, 0px) scale(" +
 							scaleValue.toFixed(4) +
 							")";
+						/* the words follow the chip, so each pin reads one at a time */
+						const label = inner.firstElementChild;
+						const words = label ? label.lastElementChild : null;
+						if (words) {
+							const wordsT = clamp01((p - (innerStart + 0.035)) / 0.06);
+							words.style.opacity = String(easeOutCubic(wordsT));
+							words.style.transform = "translateX(" + ((1 - wordsT) * -10).toFixed(2) + "px)";
+						}
 					}
 				};
 
@@ -491,7 +552,14 @@ export default function Location3D() {
 					</span>
 				</div>
 
-				<div className="location-3d-stage" aria-hidden="true" ref={stageRef}>
+				<div
+						className="location-3d-stage"
+						ref={stageRef}
+						onPointerDown={onDragStart}
+						onPointerMove={onDragMove}
+						onPointerUp={onDragEnd}
+						onPointerCancel={onDragEnd}
+					>
 					<div className="location-3d-scene">
 						<div className="location-3d-plane">
 							<img

@@ -2499,3 +2499,131 @@ body.masterplan-lock{
 		font-size: 10px;
 	}
 }
+
+
+/* ---- mobile refinements: round pins, icons in the card ---- */
+@media (max-width: 900px){
+
+
+	/* one column keeps the icon, name and distance on a single readable row */
+	.location-3d-panel > .location-3d-list{
+		grid-template-columns: 1fr;
+		gap: 0;
+		margin-top: 6px;
+	}
+
+	.location-3d-panel > .location-3d-list li{
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 7px 0;
+		border-bottom: 1px solid rgba(228, 213, 188, .12);
+	}
+
+	.location-3d-panel > .location-3d-list i{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		flex: 0 0 30px;
+		font-size: 11px;
+	}
+
+	.location-3d-panel > .location-3d-list span{
+		font-size: 13px;
+		line-height: 1.25;
+	}
+
+	.location-3d-panel > .location-3d-list b{
+		font-size: 13px;
+		margin-left: auto;
+	}
+
+	.location-3d-panel > .location-3d-list b small{
+		font-size: 11px;
+	}
+
+	.location-3d-pin > .location-3d-panel{
+		max-height: 58vh;
+	}
+}
+
+
+/* ---- mobile: destination pins carry their name and distance ---- */
+@media (max-width: 900px){
+
+	.loc-pin.is-destination .loc-pin-label{
+		padding: 4px 9px 4px 4px;
+		gap: 6px;
+		max-width: 48vw;
+	}
+
+	.loc-pin-label > span{
+		display: block;
+		text-align: left;
+	}
+
+	.loc-pin.is-destination .loc-pin-label b{
+		display: block;
+		font-size: 9.5px;
+		line-height: 1.15;
+		white-space: normal;
+	}
+
+	.loc-pin.is-destination .loc-pin-label small{
+		display: block;
+		font-size: 8px;
+		line-height: 1.15;
+		margin-top: 1px;
+	}
+
+	.loc-pin.is-destination .loc-pin-label i{
+		width: 20px;
+		height: 20px;
+		font-size: 8px;
+	}
+}
+
+
+/* ---- mobile: lift the map and let it be dragged sideways ---- */
+@media (max-width: 900px){
+
+	.location-3d-pin > .location-3d-stage{
+		pointer-events: auto;
+		touch-action: pan-y;
+		cursor: grab;
+	}
+
+	.location-3d-pin > .location-3d-stage:active{
+		cursor: grabbing;
+	}
+
+	/* keep the pin chips above the intro scrim while the map is lifted */
+	.location-3d-scene{
+		align-items: center;
+	}
+}
+
+
+/* ---- mobile: keep chips inside the frame while sliding ---- */
+@media (max-width: 900px){
+
+	/* pull the whole scene in a little so rim chips have margin to breathe */
+	.location-3d-scene{
+		transform: rotateX(calc(var(--my) * 1deg)) rotateY(calc(var(--mx) * 1deg)) scale(0.88);
+	}
+
+	/* let chips render past the stage box instead of being clipped by it */
+	.location-3d-pin > .location-3d-stage{
+		overflow: visible;
+	}
+
+	.loc-pin.is-destination .loc-pin-label{
+		max-width: 42vw;
+	}
+
+	.loc-pin.is-destination .loc-pin-label b{
+		font-size: 9px;
+	}
+}
