@@ -79,7 +79,7 @@ export default function Header() {
           aria-label="EarthyRoots Farm — home"
           onClick={(event) => handleNavigate(event, "/")}
         >
-          <span className="logo-text">EarthyRoots Farm</span>
+          <img className="logo-img" src="images/added/logo.svg" alt="EarthyRoots Farm" />
         </a>
         <div className="nav-r">
           <a

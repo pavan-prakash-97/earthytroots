@@ -13,7 +13,7 @@ import {
 	STATUS_LABEL
 } from "../data/masterplan.js";
 
-const MAP_IMAGE = `${import.meta.env.BASE_URL}images/location-image.jpeg`;
+const MAP_IMAGE = `${import.meta.env.BASE_URL}images/masterplan-127-clean.jpeg`;
 
 const FILTERS = [
 	{ cluster: "all", label: "All" },
@@ -23,7 +23,7 @@ const FILTERS = [
 ];
 
 function formatSqft(n) {
-	return n.toLocaleString("en-IN") + " sq.ft";
+	return n ? n.toLocaleString("en-IN") + " sq.ft" : "On request";
 }
 
 function useMediaQuery(query) {
@@ -400,15 +400,11 @@ export default function Masterplan() {
 				<ul>
 					<li>
 						<span>Size</span>
-						<span>{formatSqft(p[4])}</span>
+						<span>{p[4] ? formatSqft(p[4]) : "On request"}</span>
 					</li>
 					<li>
-						<span>Cluster</span>
-						<span>{CLUSTERS[p[1]]}</span>
-					</li>
-					<li>
-						<span>Facing</span>
-						<span>{p[6]}</span>
+						<span>Guntas</span>
+						<span>{p[6] != null ? p[6].toFixed(2) + " guntas" : "On request"}</span>
 					</li>
 				</ul>
 				{p[5] !== "sold" && (
@@ -434,17 +430,18 @@ export default function Masterplan() {
 	return (
 		<div className="masterplan" id="masterplan">
 			<div className="container">
-
-				<div className="masterplan-head">
-					<span className="section-sub-title">The Living Masterplan</span>
-					<h2 className="masterplan-title">
-						The Whole Land. <em>Every Plot.</em>
-					</h2>
-				</div>
 				<div className="row align-items-center">
 					<div className="col-xl-5">
 						<div className="masterplan-content">
 							<div className="section-title">
+									<span className="section-sub-title">
+										The Living Masterplan
+									</span>
+									<h2 className="masterplan-title">
+										The Whole Land.
+										<br />
+										<em>Every Plot.</em>
+									</h2>
 
 								<p
 									className="wow fadeInUp"

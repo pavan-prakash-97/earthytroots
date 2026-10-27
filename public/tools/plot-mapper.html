@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plot mapper — EarthyRoots Farm</title>
+    <style>
+      :root {
+        --paper: #f4ecdd;
+        --ink: #151212;
+        --wine: #581b1d;
+        --brass: #b0936d;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        min-height: 100vh;
+      }
+      .stage { position: relative; overflow: auto; padding: 16px; }
+      .frame { position: relative; display: inline-block; }
+      .frame img { display: block; max-width: 100%; user-select: none; -webkit-user-drag: none; }
+      .pin {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        margin: -11px 0 0 -11px;
+        border-radius: 50%;
+        background: var(--wine);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+        border: 2px solid #fff;
+      }
+      aside {
+        border-left: 1px solid rgba(21, 18, 18, 0.15);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #fff;
+      }
+      h1 { font-size: 16px; margin: 0 0 4px; }
+      p.hint { margin: 0; font-size: 12.5px; line-height: 1.5; color: #6b5a47; }
+      .count { font-size: 28px; font-weight: 700; color: var(--wine); }
+      .count small { font-size: 12px; font-weight: 500; color: #6b5a47; }
+      button {
+        font: inherit;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 10px 12px;
+        border: 1px solid rgba(21, 18, 18, 0.25);
+        background: transparent;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      button.primary { background: var(--wine); border-color: var(--wine); color: #fff; }
+      textarea {
+        width: 100%;
+        flex: 1;
+        min-height: 160px;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 11px;
+        border: 1px solid rgba(21, 18, 18, 0.2);
+        border-radius: 8px;
+        padding: 10px;
+        resize: vertical;
+      }
+      .row { display: flex; gap: 8px; }
+      .row > * { flex: 1; }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="frame" id="frame">
+        <img id="plan" src="../images/masterplan-127.jpeg" alt="Estate plan with plot numbers" />
+      </div>
+    </div>
+
+    <aside>
+      <h1>Plot mapper</h1>
+      <p class="hint">
+        Click each parcel in plot-number order: 1, 2, 3 … 127. Points are placed at the
+        click, and the counter shows where you are. <b>Backspace</b> removes the last one.
+        When all 127 are placed, press <b>Copy JSON</b> and paste it back into the chat.
+      </p>
+      <div class="count"><span id="count">0</span> <small>of 127 placed</small></div>
+      <div class="row">
+        <button id="undo">Undo</button>
+        <button id="clear">Clear</button>
+      </div>
+      <div class="row">
+        <button id="copy" class="primary">Copy JSON</button>
+      </div>
+      <textarea id="output" spellcheck="false" placeholder="JSON appears here…"></textarea>
+    </aside>
+
+    <script>
+      const frame = document.getElementById("frame")
+      const img = document.getElementById("plan")
+      const count = document.getElementById("count")
+      const output = document.getElementById("output")
+      const KEY = "earthyroots-plot-points-v2"
+      let points = []
+
+      const restore = () => {
+        try {
+          const raw = localStorage.getItem(KEY)
+          if (raw) points = JSON.parse(raw)
+        } catch (error) {
+          points = []
+        }
+      }
+
+      const paint = () => {
+        frame.querySelectorAll(".pin").forEach((pin) => pin.remove())
+        const rect = img.getBoundingClientRect()
+        points.forEach((point, index) => {
+          const pin = document.createElement("div")
+          pin.className = "pin"
+          pin.textContent = String(index + 1)
+          pin.style.left = (point.x / 100) * rect.width + "px"
+          pin.style.top = (point.y / 100) * rect.height + "px"
+          frame.appendChild(pin)
+        })
+        count.textContent = String(points.length)
+        const json = JSON.stringify(
+          points.map((point, index) => ({ n: index + 1, x: +point.x.toFixed(2), y: +point.y.toFixed(2) })),
+        )
+        output.value = points.length ? json : ""
+        try {
+          localStorage.setItem(KEY, JSON.stringify(points))
+        } catch (error) {
+          /* storage full or blocked */
+        }
+      }
+
+      img.addEventListener("click", (event) => {
+        if (points.length >= 127) return
+        const rect = img.getBoundingClientRect()
+        const x = ((event.clientX - rect.left) / rect.width) * 100
+        const y = ((event.clientY - rect.top) / rect.height) * 100
+        points.push({ x, y })
+        paint()
+      })
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Backspace") {
+          event.preventDefault()
+          points.pop()
+          paint()
+        }
+      })
+
+      document.getElementById("undo").onclick = () => {
+        points.pop()
+        paint()
+      }
+      document.getElementById("clear").onclick = () => {
+        points = []
+        paint()
+      }
+      document.getElementById("copy").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(output.value)
+          document.getElementById("copy").textContent = "Copied"
+          window.setTimeout(() => (document.getElementById("copy").textContent = "Copy JSON"), 1400)
+        } catch (error) {
+          output.select()
+        }
+      }
+
+      window.addEventListener("resize", paint)
+      img.addEventListener("load", paint)
+      restore()
+      paint()
+    </script>
+  </body>
+</html>

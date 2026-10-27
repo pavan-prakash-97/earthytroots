@@ -31,7 +31,7 @@ export default function Footer() {
 
         <div className="f-grid">
           <div className="f-brand rv">
-            <div className="f-mark">EarthyRoots Farm</div>
+            <img className="f-mark-img" src="images/added/logo.svg" alt="EarthyRoots Farm" />
             <p>
               EarthyRoots Farm is more than a single development. It brings together a growing
               portfolio of thoughtfully planned farm and land projects, each with its own distinct

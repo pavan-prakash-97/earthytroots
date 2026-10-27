@@ -978,3 +978,25 @@ body.menu-dismiss #menu{
 	clip-path: inset(0 0 100% 0) !important;
 	pointer-events: none !important;
 }
+/* loader mark: the supplied artwork replaces the wordmark */
+#loader .loader-mark{
+	width: clamp(120px, 16vw, 190px);
+	height: auto;
+	display: block;
+	animation: pulse 1.9s ease-in-out infinite;
+}
+/* top-bar wordmark: the supplied cream SVG */
+.logo .logo-img{
+	display: block;
+	height: clamp(24px, 2vw, 30px);
+	width: auto;
+	max-width: 100%;
+}
+/* footer wordmark uses the same SVG as the top bar */
+#footer .f-mark-img{
+	display: block;
+	height: clamp(26px, 2.2vw, 34px);
+	width: auto;
+	max-width: 100%;
+	margin-bottom: 22px;
+}

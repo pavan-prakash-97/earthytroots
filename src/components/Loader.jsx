@@ -15,9 +15,7 @@ export default function Loader() {
 
   return (
     <div id="loader" className={off ? "off" : undefined}>
-      <span>
-        Earthy<i>Roots</i> Farm
-      </span>
+      <img className="loader-mark" src="images/loader.png" alt="EarthyRoots Farm" />
     </div>
   )
 }
