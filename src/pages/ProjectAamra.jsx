@@ -18,6 +18,20 @@ export default function ProjectAamra() {
     <section className="wrap cream"><div className="eyebrow rv">Designed For Living</div><h2 className="rv" style={{ maxWidth: '16ch' }}>Made for <em>moments.</em></h2>
     <p className="lede rv" style={{ marginTop: '24px' }}>A Lifestyle Designed Around You. Aamra brings together spaces for wellness, leisure, community and everyday experiences, thoughtfully planned to make every moment meaningful. From quiet mornings surrounded by nature to time spent with family and friends, every element is designed to create a balanced and fulfilling way of living.</p>
     <div className="groups"><div className="group rv"><h3>Wellness &amp; Nature</h3><ul><li>Yoga &amp; Meditation Deck</li><li>Watchtower &amp; Nature Viewing</li><li>Landscaped Gardens &amp; Nature Trails</li><li>Nature Walks, Cycling &amp; Hiking Trails</li><li>Water Pond &amp; Rainwater Retention Pond</li></ul></div><div className="group rv"><h3>Leisure &amp; Community</h3><ul><li>Clubhouse &amp; Swimming Pool</li><li>Grand Gathering &amp; Multipurpose Pavilion</li><li>Indoor Games Arena</li><li>Children's Play Area</li><li>Outdoor Sports Ground</li><li>Library, Café &amp; Reading Lounge</li></ul></div><div className="group rv"><h3>Food &amp; Experiences</h3><ul><li>Live Kitchen &amp; Alfresco Dining</li><li>Farm-to-Table Dining</li><li>Bonfire Pit &amp; Stargazing Deck</li></ul></div></div>
+    <div className="aamra-map rv">
+      <img src="images/added/aamra-location-map.png" alt="AAMRA location map along Kanakapura Road, near Harohara, Bujalli and Bengaluru" />
+      <a
+        className="aamra-map-pin"
+        href="https://maps.app.goo.gl/9bH4ZAh3Mgoyrh5q6?g_st=iw"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open the AAMRA location in Google Maps"
+      >
+        <span className="aamra-map-ring"></span>
+        <span className="aamra-map-ring aamra-map-ring--late"></span>
+        <i className="fa-solid fa-location-dot"></i>
+      </a>
+    </div>
     <div className="strip rv"><b>10+ Thoughtfully Planned Features.</b><a className="link" href="/amenities">See every amenity ↗</a></div></section>
     <section className="wrap dark ink"><div className="eyebrow rv">Project Highlights</div><h2 className="rv">Built to be <em>trusted.</em></h2><div className="hl"><article className="rv"><h3>Managed Farmland Community</h3><p>A premium gated farmland community designed around nature, privacy and a thoughtfully managed lifestyle.</p></article><article className="rv"><h3>Connected &amp; Accessible</h3><p>Excellent road connectivity with wide, easily navigable internal roads for effortless access throughout the community.</p></article><article className="rv"><h3>Secure &amp; Legally Sound</h3><p>100% clear titles and legal compliance, with a gated entrance, 24×7 security and CCTV surveillance.</p></article><article className="rv"><h3>Green By Design</h3><p>High-value green plantations, reliable water sources, drip irrigation and solar fencing create a sustainable farming ecosystem.</p></article><article className="rv"><h3>Eco Luxury Living</h3><p>A curated collection of nature-led amenities, supported by guaranteed maintenance for a seamless ownership experience.</p></article></div></section>
     <section className="wrap dark wine"><div className="eyebrow rv">Investment Benefits</div><h2 className="rv">Built for <em>long-term value.</em></h2>
